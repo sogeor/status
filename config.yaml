@@ -1,0 +1,141 @@
+# Gatus configuration of status.sogeor.com (deployed by sogeor/ansible, role status_vps).
+# The page is public: endpoints hide hostnames, ports and URLs; server checks also hide errors.
+# Secrets come from the environment of the service: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID.
+
+web:
+  address: 127.0.0.1
+  port: 8080
+
+storage:
+  type: sqlite
+  path: /data/data.db
+
+ui:
+  title: sogeor status
+  description: Live status of Sogeor services.
+  header: sogeor
+  logo: /assets/logo.svg
+  link: https://github.com/sogeor
+  favicon:
+    default: /assets/favicon.svg
+  dashboard-heading: Service status
+  dashboard-subheading: Checked every minute from an independent server.
+  buttons:
+    - name: GitHub
+      link: https://github.com/sogeor
+    - name: Report a security issue
+      link: mailto:security@sogeor.com
+  dark-mode: true
+  default-sort-by: group
+  custom-css: |
+    :root { color-scheme: dark; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    html.dark body, html.dark #app { background-color: #000000; color: #ffffff; }
+    a { color: #e5261f; }
+    a:hover { text-decoration: underline; }
+
+alerting:
+  telegram:
+    token: ${TELEGRAM_BOT_TOKEN}
+    id: ${TELEGRAM_CHAT_ID}
+    default-alert:
+      failure-threshold: 3
+      success-threshold: 2
+      send-on-resolved: true
+
+# Outages and maintenance: add an entry here through a pull request.
+announcements: []
+
+endpoints:
+  # --- Infrastructure ---
+  - name: odin · SSH
+    group: Infrastructure
+    url: tcp://odin.sogeor.com:822
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+    ui: &private
+      hide-hostname: true
+      hide-port: true
+      hide-url: true
+      hide-errors: true
+      hide-conditions: true
+
+  - name: odin · ping
+    group: Infrastructure
+    url: icmp://odin.sogeor.com
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+    ui: *private
+
+  # --- Website ---
+  - name: sogeor.com
+    group: Website
+    url: https://sogeor.com
+    interval: 5m
+    client:
+      ignore-redirect: true
+    conditions:
+      - "[STATUS] == 301"
+      - "[CERTIFICATE_EXPIRATION] > 336h"
+    alerts:
+      - type: telegram
+    ui: &public
+      hide-hostname: true
+      hide-port: true
+      hide-url: true
+
+  - name: docs.sogeor.com
+    group: Website
+    url: https://docs.sogeor.com
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 336h"
+    alerts:
+      - type: telegram
+    ui: *public
+
+  - name: status.sogeor.com
+    group: Website
+    url: https://status.sogeor.com
+    interval: 1h
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 336h"
+    alerts:
+      - type: telegram
+    ui: *public
+
+  # --- DNS & Email ---
+  - name: DNS
+    group: DNS & Email
+    url: 1.1.1.1
+    interval: 10m
+    dns:
+      query-name: sogeor.com
+      query-type: NS
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+    alerts:
+      - type: telegram
+    ui: *public
+
+  - name: Email routing
+    group: DNS & Email
+    url: 1.1.1.1
+    interval: 1h
+    dns:
+      query-name: sogeor.com
+      query-type: MX
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+      - "[BODY] == pat(*mx.cloudflare.net*)"
+    alerts:
+      - type: telegram
+    ui: *public

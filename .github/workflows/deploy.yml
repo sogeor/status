@@ -1,0 +1,27 @@
+name: deploy
+# A configuration change on master triggers the sogeor/ansible deploy (role status_vps).
+on:
+  push:
+    branches: [master]
+    paths: ["config.yaml", "assets/**", ".github/workflows/deploy.yml"]
+  workflow_dispatch: {}
+permissions: { contents: read }
+concurrency: { group: deploy, cancel-in-progress: false }
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
+        id: app
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: sogeor
+          repositories: ansible
+      - name: Trigger sogeor/ansible deploy
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: >-
+          gh api -X POST repos/sogeor/ansible/dispatches
+          -f event_type=status-config
+          -f "client_payload[sha]=$GITHUB_SHA"

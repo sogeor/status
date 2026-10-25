@@ -1,0 +1,27 @@
+name: validate
+# Gatus must start and become healthy with config.yaml; needs no secrets.
+on:
+  push: { branches: [master] }
+  pull_request: {}
+permissions: { contents: read }
+jobs:
+  gatus:
+    runs-on: ubuntu-latest
+    env:
+      # Same image as gatus_version in sogeor/ansible (roles/status_vps/defaults/main.yml)
+      GATUS_IMAGE: ghcr.io/twin/gatus:v5.37.0@sha256:094eb186e55235db367e90e9d56140e5897b7044c41de23cde4cc18e6da1242e
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with: { persist-credentials: false }
+      - name: Gatus starts with config.yaml
+        run: |
+          docker run -d --name gatus --network host \
+            -e GATUS_CONFIG_PATH=/config/config.yaml -e TELEGRAM_BOT_TOKEN=test -e TELEGRAM_CHAT_ID=0 \
+            -v "$PWD/config.yaml:/config/config.yaml:ro" -v gatus-data:/data "$GATUS_IMAGE"
+          for _ in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/health; then echo; docker logs gatus 2>&1 | tail -20; exit 0; fi
+            [ "$(docker inspect -f '{{.State.Running}}' gatus)" = true ] || break
+            sleep 1
+          done
+          docker logs gatus
+          exit 1

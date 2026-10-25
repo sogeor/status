@@ -1,0 +1,8 @@
+name: pr-title
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+permissions: { pull-requests: read }
+jobs:
+  check:
+    uses: sogeor/workflows/.github/workflows/pr-title.yml@47d61181df754f7b85436533e1457866e233f4fc # v1.3.2
