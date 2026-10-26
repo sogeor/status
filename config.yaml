@@ -18,6 +18,8 @@ ui:
   link: https://github.com/sogeor
   favicon:
     default: /assets/favicon.svg
+    size16x16: /assets/favicon-16.png
+    size32x32: /assets/favicon-32.png
   dashboard-heading: Service status
   dashboard-subheading: Checked every minute from an independent server.
   buttons:
@@ -27,12 +29,30 @@ ui:
       link: mailto:security@sogeor.com
   dark-mode: true
   default-sort-by: group
+  # Brand palette (sogeor/brand colors.md) through the theme variables of the Gatus UI (HSL).
+  # custom.css loads before app.css, so the selectors are more specific than Gatus' own.
   custom-css: |
-    :root { color-scheme: dark; }
+    html:root {
+      --background: 0 0% 100%; --foreground: 0 0% 0%;
+      --card: 0 0% 100%; --card-foreground: 0 0% 0%;
+      --muted-foreground: 0 0% 45%; --border: 0 0% 90%; --input: 0 0% 90%;
+      --ring: 0 0% 45%; --radius: 0.5rem;
+    }
+    html.dark {
+      --background: 0 0% 0%; --foreground: 0 0% 100%;
+      --card: 0 0% 4%; --card-foreground: 0 0% 100%;
+      --popover: 0 0% 4%; --popover-foreground: 0 0% 100%;
+      --primary: 0 0% 100%; --primary-foreground: 0 0% 0%;
+      --secondary: 0 0% 10%; --secondary-foreground: 0 0% 100%;
+      --muted: 0 0% 10%; --muted-foreground: 0 0% 64%;
+      --accent: 0 0% 10%; --accent-foreground: 0 0% 100%;
+      --border: 0 0% 15%; --input: 0 0% 15%; --ring: 0 0% 64%;
+    }
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-    html.dark body, html.dark #app { background-color: #000000; color: #ffffff; }
-    a { color: #e5261f; }
-    a:hover { text-decoration: underline; }
+    a:hover { color: #e5261f; }
+    /* The header subtitle is fixed in Gatus ("System Monitoring Dashboard"): show "status" instead */
+    header h1 + p { font-size: 0; }
+    header h1 + p::after { content: "status"; font-size: 0.875rem; }
 
 alerting:
   telegram:
