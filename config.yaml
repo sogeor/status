@@ -119,7 +119,7 @@ endpoints:
     url: https://docs.sogeor.com
     interval: 5m
     conditions:
-      - "[STATUS] == 299"
+      - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 336h"
     alerts:
       - type: telegram
