@@ -58,6 +58,10 @@ alerting:
   telegram:
     token: ${TELEGRAM_BOT_TOKEN}
     id: ${TELEGRAM_CHAT_ID}
+    # api.telegram.org is blocked from the network of the status server; Cloudflare Worker proxy (sogeor/tofu dns)
+    api-url: https://tg.sogeor.com
+    client:
+      timeout: 20s
     default-alert:
       failure-threshold: 3
       success-threshold: 2
