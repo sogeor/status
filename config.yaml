@@ -30,7 +30,7 @@ ui:
   dark-mode: true
   default-sort-by: group
   # Brand palette (sogeor/brand colors.md) through the theme variables of the Gatus UI (HSL).
-  # custom.css loads before app.css, so the selectors are more specific than Gatus' own.
+  # Gatus defines them on :root and :root.dark; these selectors are one step more specific.
   custom-css: |
     html:root {
       --background: 0 0% 100%; --foreground: 0 0% 0%;
@@ -38,7 +38,7 @@ ui:
       --muted-foreground: 0 0% 45%; --border: 0 0% 90%; --input: 0 0% 90%;
       --ring: 0 0% 45%; --radius: 0.5rem;
     }
-    html.dark {
+    html:root.dark {
       --background: 0 0% 0%; --foreground: 0 0% 100%;
       --card: 0 0% 4%; --card-foreground: 0 0% 100%;
       --popover: 0 0% 4%; --popover-foreground: 0 0% 100%;
@@ -51,8 +51,8 @@ ui:
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
     a:hover { color: #e5261f; }
     /* The header subtitle is fixed in Gatus ("System Monitoring Dashboard"): show "status" instead */
-    header h1 + p { font-size: 0; }
-    header h1 + p::after { content: "status"; font-size: 0.875rem; }
+    header h1 + p.text-sm { font-size: 0; }
+    header h1 + p.text-sm::after { content: "status"; font-size: 0.875rem; }
 
 alerting:
   telegram:
