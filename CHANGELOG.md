@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/sogeor/status/compare/v1.0.1...v1.1.0) (2026-10-28)
+
+
+### Added
+
+* add Gatus configuration for status.sogeor.com ([9680052](https://github.com/sogeor/status/commit/9680052e4ca3d5acd37ff539d3bd0f06696e3214))
+* apply brand colors and favicons to the status page ([#3](https://github.com/sogeor/status/issues/3)) ([a47b887](https://github.com/sogeor/status/commit/a47b8876e4d7c17854377cea843889503c7ee4cd))
+
+
+### Changed
+
+* update github/codeql-action digest to 9b32540 ([#11](https://github.com/sogeor/status/issues/11)) ([7a9fef2](https://github.com/sogeor/status/commit/7a9fef280e89b95fcb488ee09ff24a5d67b2ba47))
+* update sogeor/workflows action to v1.3.3 ([#6](https://github.com/sogeor/status/issues/6)) ([16879aa](https://github.com/sogeor/status/commit/16879aae4500660a33abd8d3a59c7fd63f4a5d52))
+
+
+### Fixed
+
+* override the Gatus theme variables and header subtitle ([#4](https://github.com/sogeor/status/issues/4)) ([634a41a](https://github.com/sogeor/status/commit/634a41ae71d6884b5f3d19c8461afdf331f74069))
+* send Telegram alerts through tg.sogeor.com ([#7](https://github.com/sogeor/status/issues/7)) ([38c4c59](https://github.com/sogeor/status/commit/38c4c59a908492743ef2222abdf1ac9b1d7a8237))
+
 ## [1.0.1](https://github.com/sogeor/template/compare/v1.0.0...v1.0.1) (2026-10-25)
 
 
